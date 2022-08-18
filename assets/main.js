@@ -93,42 +93,51 @@ Game.prototype.checkDiagonals = function(){
     }
 }
 
-Game.prototype.loop = function() {    
+Game.prototype.play = function() {   
+
     var players = this.players
     var counter = 0;   
     var game = this     
     
-    var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');        
+    var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
     
     availableFields.forEach(element => element.addEventListener('click', function() {
-        
+
         if (availableFields.length > 0) {
-            this.innerHTML = players[counter%2].symbol;
-            //game.refreshBoard();
-            //game.checkBoard();              
-            
-          
+            this.innerHTML = players[counter%2].symbol;            
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
             
-           
         } 
 
-    game.refreshBoard();
-    game.checkBoard();
+        game.refreshBoard();
+        game.checkBoard();
 
-    if(game.winner) {
-        alert(game.result())
-    }   
-    
-    if(availableFields.length < 1) {
-        alert("It's a tie");
-    }
+        if(game.winner) {
+            console.log(game.result());
+            game.board.resetBoard();
+            game.winner = false;
+            counter = 0;
+            availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');
+            game.play()
         
         
-    }));     
-    
+        }   
+        
+        if(availableFields.length < 1) {
+            alert("It's a tie");
+            game.board.resetBoard();                
+            counter = 0;
+            availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');
+            game.play()
+        }
+
+
+        }, { once: true }));     
+        
 }
+
+
 
 function allAreEqual(array) {
     const result = array.every(element => {
@@ -181,6 +190,14 @@ GameBoard.prototype.refreshFields = function() {
     
 }
 
+GameBoard.prototype.resetBoard = function() {
+    var boardParent = document.getElementsByClassName('game-board')[0];
+    while (boardParent.firstChild) {
+        boardParent.removeChild(boardParent.lastChild)
+    }
+    this.createBoard();
+}
+
 GameBoard.prototype.createBoard = function(){
     var boardParent = document.getElementsByClassName('game-board')[0];
     for (let i = 0; i < 9; i++) {
@@ -202,7 +219,7 @@ window.onclick = function(event) {
     } 
   }
 
-  newGame.loop()
+  newGame.play()
 
 
 
