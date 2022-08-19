@@ -39,8 +39,10 @@ Game.prototype.getPlayerNames = function() {
     displayPlayer2Name.innerText = player2name;
 }
 
-Game.prototype.showWinningFields = function(){       
-    this.winningFields.forEach(field => document.getElementById(field).style.background = 'red')    
+Game.prototype.showWinningFields = function(){     
+    var gameBoard = document.getElementsByClassName('game-board')[0];
+
+    this.winningFields.forEach(field => gameBoard.childNodes[field].className = 'box winning')    
 }
 
 
@@ -126,6 +128,7 @@ Game.prototype.play = function() {
     var counter = 0;  
     game.board.resetBoard();
     game.whosTurn(`${game.players[counter%2].name}'s turn.`)
+    game.whosTurn1(counter%2);
     
     var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
     
@@ -136,6 +139,7 @@ Game.prototype.play = function() {
             this.innerHTML = game.players[counter%2].symbol;                        
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
+            game.whosTurn1(counter%2);
             game.whosTurn(`${game.players[counter%2].name}'s turn.`)
         } 
 
@@ -152,6 +156,7 @@ Game.prototype.play = function() {
 
             button.addEventListener('click', function(e){                
                 game.continue = true;
+                game.clearAnnouncement();
                 game.play()
             }, {once: true}) 
                    
@@ -164,6 +169,7 @@ Game.prototype.play = function() {
             game.continue = false;            
             button.addEventListener('click', function(e){                
                 game.continue = true;
+                game.clearAnnouncement();
                 game.play()
             }, {once: true}) 
         }
@@ -172,6 +178,13 @@ Game.prototype.play = function() {
         
 }
 
+Game.prototype.whosTurn1 = function(id){
+ var inActive = document.getElementsByClassName('player')[id];
+ var active = document.getElementsByClassName('player')[Math.abs(id - 1)];
+
+ active.setAttribute("class", "player active");
+ inActive.setAttribute("class", "player");
+}
 
 Game.prototype.whosTurn = function(string){
     var whosTurn = document.getElementsByClassName('whosturn')[0];
