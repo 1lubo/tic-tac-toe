@@ -4,28 +4,37 @@ function Game() {
     this.player1 = new Player('', 'X');
     this.player2 = new Player('', 'O');
     this.winner = false;
-    this.players = [this.player1, this.player2]
+    this.players = [this.player1, this.player2];
+    this.continue = false;
+    this.playCounter = 0;
 }
 
 Game.prototype.initialize = function () {    
     this.board.initialize();
     this.refreshBoard();
-    modal.style.display = "block";
+    this.getPlayerNames();
+    //modal.style.display = "block";
 }
 
 Game.prototype.getPlayerNames = function() {
     var player1name = document.getElementById('player1').value;
     var player2name = document.getElementById('player2').value;
-    if (player1name.length < 1) {
+    var displayPlayer1Name = document.getElementById('player1name');
+    var displayPlayer2Name = document.getElementById('player2name')
+
+    if (player1name.length < 1 || player1name.length == null) {
         player1name = 'John Doe';
     } 
     
-    if (player2name.length < 1) {
+    if (player2name.length < 1  || player2name.length == null) {
         player2name = 'Jim Doe';
     }
     
     this.player1.name = player1name;
     this.player2.name = player2name;    
+
+    displayPlayer1Name.innerText = player1name;
+    displayPlayer2Name.innerText = player2name;
 }
 
 Game.prototype.result = function() {
@@ -93,48 +102,80 @@ Game.prototype.checkDiagonals = function(){
     }
 }
 
-Game.prototype.play = function() {   
-
-    var players = this.players
+Game.prototype.play = function() { 
+    var game = this
+    console.log(`Game # ${game.playCounter}`);
+    game.playCounter++;
+    
+    game.players.reverse()    
+    game.continue = false;
     var counter = 0;   
-    var game = this     
+    game.board.resetBoard();     
+    game.whosTurn(`${game.players[counter%2].name}'s turn.`)
     
     var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
-    
+    console.log(`Available fields: ${availableFields.length}`)
     availableFields.forEach(element => element.addEventListener('click', function() {
 
         if (availableFields.length > 0) {
-            this.innerHTML = players[counter%2].symbol;            
+            console.log(counter)
+            this.innerHTML = game.players[counter%2].symbol;                        
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
-            
+            game.whosTurn(`${game.players[counter%2].name}'s turn.`)
         } 
 
         game.refreshBoard();
         game.checkBoard();
 
-        if(game.winner) {
-            console.log(game.result());
-            game.board.resetBoard();
-            game.winner = false;
-            counter = 0;
-            availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');
-            game.play()
-        
-        
+        if(game.winner) {    
+            game.makeAnnouncement(game.result());            
+            game.updateScore();
+            game.winner = false;            
+            game.continue = false;
+
+            document.addEventListener('click', function(){                
+                game.continue = true;                
+                game.play()
+            }, {once: true})            
+           
         }   
         
         if(availableFields.length < 1) {
-            alert("It's a tie");
-            game.board.resetBoard();                
-            counter = 0;
-            availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');
-            game.play()
+            game.makeAnnouncement("It's a tie");            
+            game.continue = false;            
+            document.addEventListener('click', function(){                
+                game.continue = true;                
+                game.play()
+            }, {once: true})
         }
-
 
         }, { once: true }));     
         
+}
+
+
+Game.prototype.whosTurn = function(string){
+    var whosTurn = document.getElementsByClassName('whosturn')[0];
+    whosTurn.innerHTML = string;
+}
+
+Game.prototype.makeAnnouncement = function(string){
+    var announcement = document.getElementsByClassName('announcement')[0];
+    announcement.innerHTML = string;
+}
+
+Game.prototype.clearAnnouncement = function(){
+    var announcement = document.getElementsByClassName('announcement')[0];
+    announcement.innerHTML = '';
+}
+
+Game.prototype.updateScore = function() {
+    var player1Score = document.getElementsByClassName('player')[0].querySelector('#score');
+    var player2Score = document.getElementsByClassName('player')[1].querySelector('#score');
+
+    player1Score.innerHTML = this.player1.score;
+    player2Score.innerHTML = this.player2.score;
 }
 
 
@@ -226,6 +267,7 @@ window.onclick = function(event) {
 
 
 var getNamesButton = document.getElementById("getnames");
+
 
 //getNamesButton.addEventListener('onclick', getPlayerNames());
 getNamesButton.addEventListener('click', function() {newGame.getPlayerNames()});
