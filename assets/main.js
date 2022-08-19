@@ -6,7 +6,9 @@ function Game() {
     this.winner = false;
     this.players = [this.player1, this.player2];
     this.continue = false;
-    this.playCounter = 0;
+    this.winningFields = null;
+    this.counter = 0;
+    
 }
 
 Game.prototype.initialize = function () {    
@@ -36,6 +38,11 @@ Game.prototype.getPlayerNames = function() {
     displayPlayer1Name.innerText = player1name;
     displayPlayer2Name.innerText = player2name;
 }
+
+Game.prototype.showWinningFields = function(){       
+    this.winningFields.forEach(field => document.getElementById(field).style.background = 'red')    
+}
+
 
 Game.prototype.result = function() {
     
@@ -70,10 +77,13 @@ Game.prototype.checkBoard = function() {
 
 Game.prototype.checkRows = function() {
     if (allAreEqual(this.board.row1) && this.board.row1[0] != '') {
+        this.winningFields = [0,1,2];
         return this.board.row1[0];
     } else if (allAreEqual(this.board.row2) && this.board.row2[0] != '') {
+        this.winningFields = [3,4,5];
         return this.board.row2[0];
     } else if (allAreEqual(this.board.row3) && this.board.row3[0] != '') {
+        this.winningFields = [6,7,8];
         return this.board.row3[0];
     } else {
         return false;
@@ -82,10 +92,13 @@ Game.prototype.checkRows = function() {
 
 Game.prototype.checkColumns = function() {
     if (allAreEqual(this.board.col1) && this.board.col1[0] != '') {
+        this.winningFields = [0, 3, 6];
         return this.board.col1[0];
     } else if (allAreEqual(this.board.col2) && this.board.col2[0] != '') {
+        this.winningFields = [1, 4, 7];
         return this.board.col2[0];
     } else if (allAreEqual(this.board.col3) && this.board.col3[0] != '') {
+        this.winningFields = [2, 5, 8];
         return this.board.col3[0];
     } else {
         return false;
@@ -94,8 +107,10 @@ Game.prototype.checkColumns = function() {
 
 Game.prototype.checkDiagonals = function(){
     if (allAreEqual(this.board.diag1) && this.board.diag1[0] != '') {
+        this.winningFields = [0, 4, 8];
         return this.board.diag1[0];
     } else if (allAreEqual(this.board.diag2) && this.board.diag2[0] != '') {
+        this.winningFields = [2, 4, 6];
         return this.board.diag2[0];    
     } else {
         return false;
@@ -104,21 +119,20 @@ Game.prototype.checkDiagonals = function(){
 
 Game.prototype.play = function() { 
     var game = this
-    console.log(`Game # ${game.playCounter}`);
-    game.playCounter++;
-    
-    game.players.reverse()    
+    var button = document.getElementById('start');
+    game.winningFields = null;
+    game.players.reverse();    
     game.continue = false;
-    var counter = 0;   
-    game.board.resetBoard();     
+    var counter = 0;  
+    game.board.resetBoard();
     game.whosTurn(`${game.players[counter%2].name}'s turn.`)
     
     var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
-    console.log(`Available fields: ${availableFields.length}`)
+    
     availableFields.forEach(element => element.addEventListener('click', function() {
 
         if (availableFields.length > 0) {
-            console.log(counter)
+            
             this.innerHTML = game.players[counter%2].symbol;                        
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
@@ -131,23 +145,27 @@ Game.prototype.play = function() {
         if(game.winner) {    
             game.makeAnnouncement(game.result());            
             game.updateScore();
+            game.showWinningFields();
             game.winner = false;            
-            game.continue = false;
+            game.continue = false;            
+            
 
-            document.addEventListener('click', function(){                
-                game.continue = true;                
+            button.addEventListener('click', function(e){                
+                game.continue = true;
                 game.play()
-            }, {once: true})            
-           
+            }, {once: true}) 
+                   
+            
+            
         }   
         
         if(availableFields.length < 1) {
             game.makeAnnouncement("It's a tie");            
             game.continue = false;            
-            document.addEventListener('click', function(){                
-                game.continue = true;                
+            button.addEventListener('click', function(e){                
+                game.continue = true;
                 game.play()
-            }, {once: true})
+            }, {once: true}) 
         }
 
         }, { once: true }));     
@@ -232,6 +250,7 @@ GameBoard.prototype.refreshFields = function() {
 }
 
 GameBoard.prototype.resetBoard = function() {
+    
     var boardParent = document.getElementsByClassName('game-board')[0];
     while (boardParent.firstChild) {
         boardParent.removeChild(boardParent.lastChild)
@@ -251,28 +270,12 @@ GameBoard.prototype.createBoard = function(){
 }
 
 var newGame = new Game()
-var modal = document.getElementById("myModal");
+//var modal = document.getElementById("myModal");
 window.addEventListener('onload', newGame.initialize())
-
-window.onclick = function(event) {
-    if (event.target == modal) {            
-      modal.style.display = "none";
-    } 
-  }
-
-  newGame.play()
-
-
-
+newGame.play()
 
 
 var getNamesButton = document.getElementById("getnames");
-
-
-//getNamesButton.addEventListener('onclick', getPlayerNames());
 getNamesButton.addEventListener('click', function() {newGame.getPlayerNames()});
 getNamesButton.addEventListener('click', function(){modal.style.display = "none"});
 
-//document.getElementById('0').innerHTML = 'X';
-//document.getElementById('1').innerHTML = 'X';
-//document.getElementById('2').innerHTML = 'X';
