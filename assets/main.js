@@ -19,8 +19,8 @@ Game.prototype.initialize = function () {
 }
 
 Game.prototype.getPlayerNames = function() {
-    var player1name = document.getElementById('player1').value;
-    var player2name = document.getElementById('player2').value;
+    //var player1name = document.getElementById('player1').value;
+    //var player2name = document.getElementById('player2').value;
     var displayPlayer1Name = document.getElementById('player1name');
     var displayPlayer2Name = document.getElementById('player2name')
 
@@ -122,13 +122,13 @@ Game.prototype.checkDiagonals = function(){
 Game.prototype.play = function() { 
     var game = this
     var button = document.getElementById('start');
+    var resetButton = document.getElementById('reset');
     game.winningFields = null;
     game.players.reverse();    
     game.continue = false;
     var counter = 0;  
-    game.board.resetBoard();
-    game.whosTurn(`${game.players[counter%2].name}'s turn.`)
-    game.whosTurn1(counter%2);
+    game.board.resetBoard();    
+    game.whosTurn(counter%2);
     
     var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
     
@@ -139,8 +139,7 @@ Game.prototype.play = function() {
             this.innerHTML = game.players[counter%2].symbol;                        
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
-            game.whosTurn1(counter%2);
-            game.whosTurn(`${game.players[counter%2].name}'s turn.`)
+            game.whosTurn(counter%2);            
         } 
 
         game.refreshBoard();
@@ -152,12 +151,22 @@ Game.prototype.play = function() {
             game.showWinningFields();
             game.winner = false;            
             game.continue = false;            
-            
+            game.showModal()
 
             button.addEventListener('click', function(e){                
                 game.continue = true;
                 game.clearAnnouncement();
                 game.play()
+                game.hideModal()
+            }, {once: true}) 
+
+            resetButton.addEventListener('click', function(e){                                
+                game.clearAnnouncement();
+                game.player1.score = 0;
+                game.player2.score = 0;
+                game.updateScore();
+                game.play()
+                game.hideModal()
             }, {once: true}) 
                    
             
@@ -166,11 +175,23 @@ Game.prototype.play = function() {
         
         if(availableFields.length < 1) {
             game.makeAnnouncement("It's a tie");            
-            game.continue = false;            
+            game.continue = false;  
+            game.showModal();
+
             button.addEventListener('click', function(e){                
                 game.continue = true;
                 game.clearAnnouncement();
                 game.play()
+                game.hideModal()
+            }, {once: true}) 
+
+            resetButton.addEventListener('click', function(e){                                
+                game.clearAnnouncement();
+                game.player1.score = 0;
+                game.player2.score = 0;
+                game.updateScore();
+                game.play()
+                game.hideModal()
             }, {once: true}) 
         }
 
@@ -178,7 +199,19 @@ Game.prototype.play = function() {
         
 }
 
-Game.prototype.whosTurn1 = function(id){
+Game.prototype.showModal = function(){
+    var modal = document.getElementById("myModal");
+    modal.style.display = "block";
+}
+
+
+Game.prototype.hideModal = function(){
+    var modal = document.getElementById("myModal");
+    modal.style.display = "none";
+
+}
+
+Game.prototype.whosTurn = function(id){
  var inActive = document.getElementsByClassName('player')[id];
  var active = document.getElementsByClassName('player')[Math.abs(id - 1)];
 
@@ -186,10 +219,6 @@ Game.prototype.whosTurn1 = function(id){
  inActive.setAttribute("class", "player");
 }
 
-Game.prototype.whosTurn = function(string){
-    var whosTurn = document.getElementsByClassName('whosturn')[0];
-    whosTurn.innerHTML = string;
-}
 
 Game.prototype.makeAnnouncement = function(string){
     var announcement = document.getElementsByClassName('announcement')[0];
@@ -288,7 +317,7 @@ window.addEventListener('onload', newGame.initialize())
 newGame.play()
 
 
-var getNamesButton = document.getElementById("getnames");
-getNamesButton.addEventListener('click', function() {newGame.getPlayerNames()});
-getNamesButton.addEventListener('click', function(){modal.style.display = "none"});
+//var getNamesButton = document.getElementById("getnames");
+//getNamesButton.addEventListener('click', function() {newGame.getPlayerNames()});
+//getNamesButton.addEventListener('click', function(){modal.style.display = "none"});
 
