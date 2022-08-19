@@ -61,7 +61,7 @@
 }
 
 .winning {
-  animation: anim 1.5s ease-in-out alternate infinite;
+  animation: pulse 1.5s ease-in-out alternate infinite;
 }
 
 @keyframes pulse {
