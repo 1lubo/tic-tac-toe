@@ -202,6 +202,7 @@ Game.prototype.play = function() {
 Game.prototype.showModal = function(){
     var modal = document.getElementById("myModal");
     modal.style.display = "block";
+    document.getElementsByClassName('player active')[0].setAttribute('class', 'player');
 }
 
 

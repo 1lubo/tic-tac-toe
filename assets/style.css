@@ -1,28 +1,62 @@
 
+body {
+  background-image: linear-gradient(to bottom right, #0000009e, gray);
+}
+
+h1 {
+  padding: 12px 6px;
+  width: 600px;
+  padding: 2rem 1rem;
+  position: relative;  
+  text-align: center;
+  margin: 0 auto;
+}
 
 .score-board {
-    padding: 12px 6px;
+    margin: 0 auto;
     height: 120px;
-    width: 600px;
+    width: 300px;
     padding: 2rem 1rem;
     display: flex;
     flex-direction: row;
-    justify-content: center;
+    justify-content: space-around;
     position: relative;
-    left: 25%;
+    
 }
 
 .player {
-  height: 50px;  
   border-radius: 8px;
   display: flex;
-  flex-direction: column; 
-
+  flex-direction: row; 
+  align-items: center;
+  justify-content: space-around;
 }
 
-.active {
-  background-color: #1f955a;
-  border: 5px solid red;  
+.player#2 {
+  flex-direction: row-reverse !important;
+}
+
+
+.player-signature {
+  min-height: 2rem;
+  flex-direction: column;
+}
+
+
+.player-symbol {
+  
+  font-size: 4rem;
+  font-weight: 900;
+}
+
+.active { 
+  box-shadow: 10px 0 10px rgb(9, 175, 103);
+  font-size: xx-large;
+  width: 220px
+}
+
+.active .player-symbol {
+  transform: scale(1.5);
 }
 
 .player-signature {
@@ -33,11 +67,13 @@
   display: flex;
   justify-content: center;
   min-height: 2rem;
+  font-size: 2rem;
+  color: #fff;
 }
 
 .game-board {
-    width: 600px;
-	  height: 600px;
+    width: 300px;
+	  height: 300px;
 	  margin: 0 auto;
     background-color: #34495e;
     color: #fff;
@@ -74,7 +110,7 @@
 }
 
 
-/* The Modal (background) */
+yellowkground) */
 .modal {
     display: none;
     position: fixed;
@@ -88,11 +124,56 @@
 
 /* Modal Content/Box */
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
-    padding: 20px;
-    border: 1px solid #888;
+    background-color: #09fefe00;
+    margin: 10% auto; /* 15% from the top and centered */
+    padding: 20px;    
     width: 80%; /* Could be more or less, depending on screen size */
+    display: flex;
+    justify-content: space-around;
+  }
+
+  .button {
+   font-size: 1.5rem;
+   padding: 18px 24px; 
+   border-radius: 8px;   
+   vertical-align: middle;
+   text-align: center;
+   transition: all 0.5s;
+   cursor: pointer;
+   border: none;
+  }
+
+  .button span {
+    cursor: pointer;
+    display: inline-block;
+    position: relative;
+    transition: 0.5s;
+  }
+
+  .button span::after {
+    content: '\00bb';
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    right: -20px;
+    transition: 0.5s;
+  }
+
+  .button:hover span {
+    padding-right: 25px;
+  }
+
+  .button:hover span::after {
+    opacity: 1;
+    right: 0;
+  }
+
+  .button#start {
+    background-color: #1f955a;
+  }
+
+  .button#reset {
+    background-color: #ff433d;
   }
 
 /* The Close Button */
@@ -101,4 +182,28 @@
     float: right;
     font-size: 28px;
     font-weight: bold;
+  }
+
+  @media screen and (min-width: 700px) {
+  
+    .score-board{
+      width: 400px;
+    }
+
+    .game-board {
+      width: 400px;
+      height: 400px;
+    }    
+  }
+
+  @media screen and (min-width: 1000px) {
+
+    .score-board{
+      width: 600px;
+    }
+
+    .game-board {
+      width: 600px;
+      height: 600px;
+    } 
   }
