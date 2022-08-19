@@ -203,12 +203,14 @@ Game.prototype.showModal = function(){
     var modal = document.getElementById("myModal");
     modal.style.display = "block";
     document.getElementsByClassName('player active')[0].setAttribute('class', 'player');
+    document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 0')
 }
 
 
 Game.prototype.hideModal = function(){
     var modal = document.getElementById("myModal");
     modal.style.display = "none";
+    document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 1');
 
 }
 
