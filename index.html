@@ -13,16 +13,13 @@
     <div id="myModal" class="modal">        
     <!-- Modal Content -->
        <div class="modal-content">
-           <!-- 
-            <h1>Enter Player Names</h1>
-           <label for="player1">Player 1</label>
-           <input type="text" name="player1" id="player1">
-           <label for="player2">Player 2</label>
-           <input type="text" name="player2" id="player2">
-           <button type="submit" id="getnames">Confirm</button>
-           -->
-           <button id="start">Play Next Round</button>
-           <button id="reset">Reset Game</button>
+           
+           <button class="button" id="start"><span>Next Round</span></button>
+           <div class="announcement"></div>
+           <button class="button" id="reset"><span>Reset Game</span></button>
+           
+
+            </div>
        </div>
         
     </div>
@@ -33,29 +30,30 @@
     <div class="score-board">
         
         <div class="player" id="1">
-            <div class="player-signature">
-                <div>X</div>
-                <div id="player1name">
+            
+            <div class="player-symbol">X</div>
+            <div class="player-signature">                
+                <div class="player-name" id="player1name">
                     Player 1
                 </div>
+                <span id="score">0</span>                
             </div>
-            <span id="score">0</span>
+            
         </div>
-        
+
         <div class="player" id="2">
             <div class="player-signature">
-                <div id="player2name">
+                <div class="player-name" id="player2name">
                     Player 2
-                </div>
-                <div>O</div>
+                </div>                
+                <span id="score">0</span>    
             </div>
-            <span id="score">0</span>
+            <div class="player-symbol">O</div>            
+            
         </div>
         
     </div>
-    <div class="announcement">
-
-    </div>
+    
 
     <div class="game-board">      
     </div>
