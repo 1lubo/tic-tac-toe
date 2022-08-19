@@ -13,22 +13,32 @@
 }
 
 .player {
-  height: 50px;
-  border: 5px solid red;
+  height: 50px;  
   border-radius: 8px;
   display: flex;
+  flex-direction: column; 
 
 }
 
-.whosturn, .announcement {
+.active {
+  background-color: #1f955a;
+  border: 5px solid red;  
+}
+
+.player-signature {
+  display: flex;
+}
+
+.announcement {
   display: flex;
   justify-content: center;
+  min-height: 2rem;
 }
 
 .game-board {
     width: 600px;
-	height: 600px;
-	margin: 0 auto;
+	  height: 600px;
+	  margin: 0 auto;
     background-color: #34495e;
     color: #fff;
     border: 6px solid #2c3e50;
@@ -47,7 +57,22 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  transition: background-color 2s ease-in-out;
 }
+
+.winning {
+  animation: anim 1.5s ease-in-out alternate infinite;
+}
+
+@keyframes pulse {
+  0% {
+    background-color: #34495e;
+  }
+  100% {
+    background-color: #d82898;
+  }
+}
+
 
 /* The Modal (background) */
 .modal {
