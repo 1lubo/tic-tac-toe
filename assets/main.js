@@ -1,28 +1,20 @@
 
 function Game() {
     this.board = new GameBoard();
-    this.player1 = new Player('', 'X');
-    this.player2 = new Player('', 'O');
+    this.player1 = new Player('Player1', 'X');
+    this.player2 = new Player('Player2', 'O');
     this.winner = false;
-    this.players = [this.player1, this.player2];
-    this.continue = false;
+    this.players = [this.player1, this.player2];    
     this.winningFields = null;
-    this.counter = 0;
+    
     
 }
 
-Game.prototype.initialize = function () {    
-    this.board.initialize();
-    this.refreshBoard();
-    this.getPlayerNames();
-    //modal.style.display = "block";
-}
-
 Game.prototype.getPlayerNames = function() {
-    //var player1name = document.getElementById('player1').value;
-    //var player2name = document.getElementById('player2').value;
+    var player1name = document.getElementById('player1').value;
+    var player2name = document.getElementById('player2').value;
     var displayPlayer1Name = document.getElementById('player1name');
-    var displayPlayer2Name = document.getElementById('player2name')
+    var displayPlayer2Name = document.getElementById('player2name');
 
     if (player1name.length < 1 || player1name.length == null) {
         player1name = 'John Doe';
@@ -37,6 +29,10 @@ Game.prototype.getPlayerNames = function() {
 
     displayPlayer1Name.innerText = player1name;
     displayPlayer2Name.innerText = player2name;
+    
+    document.getElementById('player1name').value = '';
+    document.getElementById('player2name').value = '';
+    
 }
 
 Game.prototype.showWinningFields = function(){     
@@ -123,39 +119,52 @@ Game.prototype.play = function() {
     var game = this
     var button = document.getElementById('start');
     var resetButton = document.getElementById('reset');
+    var closeSettings = document.getElementById("closeSettings");
+    var openSettings = document.getElementById("openSettings");
+    var confirm = document.getElementById("confirm");
+    openSettings.addEventListener('click', function(){
+        game.openSettings();
+    } );
+    closeSettings.addEventListener('click', function() {
+        game.closeSettings();
+    });
+
+    confirm.addEventListener('click', function(){
+        game.getPlayerNames();
+        game.closeSettings();
+    })
+
     game.winningFields = null;
-    game.players.reverse();    
-    game.continue = false;
+    game.players.reverse();  /* reverse player order after each round*/      
     var counter = 0;  
-    game.board.resetBoard();        
+    game.board.resetBoard(); 
     game.whosTurn(game.players[counter%2].symbol);
     
     
-    var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
+    var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === ''); /* make an array of available fields */
     
-    availableFields.forEach(element => element.addEventListener('click', function() {
+    availableFields.forEach(element => element.addEventListener('click', function() { /* add event listener to every game board field*/
 
         if (availableFields.length > 0) {
             
-            this.innerHTML = game.players[counter%2].symbol;                        
-            availableFields.splice(availableFields.indexOf(this), 1);            
+            this.innerHTML = game.players[counter%2].symbol; /* put player symbol on the clicked field*/
+            availableFields.splice(availableFields.indexOf(this), 1); /* remove field from list of available fields*/
             counter ++;
-            game.whosTurn(game.players[counter%2].symbol);        
+            game.whosTurn(game.players[counter%2].symbol);
         } 
 
-        game.refreshBoard();
-        game.checkBoard();
+        game.refreshBoard(); /* after every turn refresh arrays which keep track of player moves*/
+        game.checkBoard(); /* after every turn check if any array holds three identical symbols*/
 
+        /* game round ends in win */
         if(game.winner) {    
             game.makeAnnouncement(game.result());            
             game.updateScore();
             game.showWinningFields();
-            game.winner = false;            
-            game.continue = false;            
+            game.winner = false;                                   
             game.showModal()
 
-            button.addEventListener('click', function(e){                
-                game.continue = true;
+            button.addEventListener('click', function(e){                                
                 game.clearAnnouncement();
                 game.play()
                 game.hideModal()
@@ -174,13 +183,12 @@ Game.prototype.play = function() {
             
         }   
         
+        /* game round ends in tie */
         if(availableFields.length < 1) {
-            game.makeAnnouncement("It's a tie");            
-            game.continue = false;  
+            game.makeAnnouncement("It's a tie");                        
             game.showModal();
 
-            button.addEventListener('click', function(e){                
-                game.continue = true;
+            button.addEventListener('click', function(e){                                
                 game.clearAnnouncement();
                 game.play()
                 game.hideModal()
@@ -200,6 +208,8 @@ Game.prototype.play = function() {
         
 }
 
+
+/* open modal after a game round finishes*/
 Game.prototype.showModal = function(){
     var modal = document.getElementById("myModal");
     modal.style.display = "block";
@@ -207,14 +217,15 @@ Game.prototype.showModal = function(){
     document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 0')
 }
 
-
+/* hide modal after a game round finishes*/
 Game.prototype.hideModal = function(){
     var modal = document.getElementById("myModal");
     modal.style.display = "none";
     document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 1');
-
 }
 
+
+/* show which player is supposed to make the next turn */
 Game.prototype.whosTurn = function(id){
  var inActiveSymbol = (id === 'X') ? 'O' : 'X';
  var inActive = document.getElementById(inActiveSymbol); 
@@ -225,16 +236,19 @@ Game.prototype.whosTurn = function(id){
 }
 
 
+/* display announcement on score board */
 Game.prototype.makeAnnouncement = function(string){
     var announcement = document.getElementsByClassName('announcement')[0];
     announcement.innerHTML = string;
 }
 
+/* clear announcement on score board */
 Game.prototype.clearAnnouncement = function(){
     var announcement = document.getElementsByClassName('announcement')[0];
     announcement.innerHTML = '';
 }
 
+/* update player score on score board */
 Game.prototype.updateScore = function() {
     var player1Score = document.getElementsByClassName('player')[0].querySelector('#score');
     var player2Score = document.getElementsByClassName('player')[1].querySelector('#score');
@@ -244,17 +258,27 @@ Game.prototype.updateScore = function() {
 }
 
 
+/* open modal with settings menu */
+Game.prototype.openSettings = function(){    
+    var modal = document.getElementById("settingsModal");
+    modal.style.display = "block";
 
-function allAreEqual(array) {
-    const result = array.every(element => {
-      if (element === array[0]) {
-        return true;
-      }
-    });
-  
-    return result;
-  }
+    
+    document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 0')
+    document.getElementById('settings').setAttribute('style', 'opacity: 0');
+}
 
+/* close modal with settings menu */
+Game.prototype.closeSettings = function(){
+    var modal = document.getElementById("settingsModal");
+    modal.style.display = "none";
+    document.getElementsByClassName('score-board')[0].setAttribute('style', 'opacity: 1');
+    document.getElementById('settings').setAttribute('style', 'opacity: 1');
+}
+
+
+
+/* Player object */
 function Player (name, symbol) {
     this.name = name || '';
     this.symbol = symbol;
@@ -262,32 +286,32 @@ function Player (name, symbol) {
 }
 
 
-
+/* Gameboard object */
 function GameBoard (){
     this.fields = [];
     }
 
+/* create rows to check for winning conditions */
 GameBoard.prototype.makeRows = function () {
     this.row1 = this.fields.slice(0,3);
     this.row2 = this.fields.slice(3,6);
     this.row3 = this.fields.slice(6);
 }
 
+/* create columns to check for winning conditions */
 GameBoard.prototype.makeColumns = function () {
     this.col1 = [this.fields.at(0), this.fields.at(3), this.fields.at(6)]
     this.col2 = [this.fields.at(1), this.fields.at(4), this.fields.at(7)]
     this.col3 = [this.fields.at(2), this.fields.at(5), this.fields.at(8)]
 }
 
+/* create diagonals to check for winning conditions */
 GameBoard.prototype.makeDiagonals = function () {
     this.diag1 = [this.fields.at(0), this.fields.at(4), this.fields.at(8)]
     this.diag2 = [this.fields.at(2), this.fields.at(4), this.fields.at(6)]
     }
 
-
-GameBoard.prototype.initialize = function() {
-    this.createBoard();    
-}
+/* refresh fields to keep track of player moves */ 
 
 GameBoard.prototype.refreshFields = function() {
     this.fields = [];
@@ -296,16 +320,9 @@ GameBoard.prototype.refreshFields = function() {
     
 }
 
-GameBoard.prototype.resetBoard = function() {
-    
-    var boardParent = document.getElementsByClassName('game-board')[0];
-    while (boardParent.firstChild) {
-        boardParent.removeChild(boardParent.lastChild)
-    }
-    this.createBoard();
-}
-
+/* create 9 boxes for the game board */ 
 GameBoard.prototype.createBoard = function(){
+    console.log('creating board function')
     var boardParent = document.getElementsByClassName('game-board')[0];
     for (let i = 0; i < 9; i++) {
         let box = document.createElement('div');
@@ -316,13 +333,32 @@ GameBoard.prototype.createBoard = function(){
     }
 }
 
-var newGame = new Game()
-//var modal = document.getElementById("myModal");
-window.addEventListener('onload', newGame.initialize())
-newGame.play()
+/* reset game board - create new boxes */
+GameBoard.prototype.resetBoard = function() {
+    
+    var boardParent = document.getElementsByClassName('game-board')[0];
+    while (boardParent.firstChild) {
+        boardParent.removeChild(boardParent.lastChild)
+    }
+    console.log('resetting board function')
+    this.createBoard();
+}
 
 
-//var getNamesButton = document.getElementById("getnames");
-//getNamesButton.addEventListener('click', function() {newGame.getPlayerNames()});
-//getNamesButton.addEventListener('click', function(){modal.style.display = "none"});
+/* helper function to check if all items in array are equal or not */ 
+function allAreEqual(array) {
+    const result = array.every(element => {
+      if (element === array[0]) {
+        return true;
+      }
+    });
+  
+    return result;
+  }
+
+
+
+var newGame = new Game(); /* create new Game instance */
+window.addEventListener('onload', newGame.play()) /* start Game on window load */
+
 
