@@ -127,8 +127,9 @@ Game.prototype.play = function() {
     game.players.reverse();    
     game.continue = false;
     var counter = 0;  
-    game.board.resetBoard();    
-    game.whosTurn(counter%2);
+    game.board.resetBoard();        
+    game.whosTurn(game.players[counter%2].symbol);
+    
     
     var availableFields = Array.from(document.getElementsByClassName('box')).filter(field => field.innerHTML === '');  
     
@@ -139,7 +140,7 @@ Game.prototype.play = function() {
             this.innerHTML = game.players[counter%2].symbol;                        
             availableFields.splice(availableFields.indexOf(this), 1);            
             counter ++;
-            game.whosTurn(counter%2);            
+            game.whosTurn(game.players[counter%2].symbol);        
         } 
 
         game.refreshBoard();
@@ -215,8 +216,9 @@ Game.prototype.hideModal = function(){
 }
 
 Game.prototype.whosTurn = function(id){
- var inActive = document.getElementsByClassName('player')[id];
- var active = document.getElementsByClassName('player')[Math.abs(id - 1)];
+ var inActiveSymbol = (id === 'X') ? 'O' : 'X';
+ var inActive = document.getElementById(inActiveSymbol); 
+ var active = document.getElementById(id);
 
  active.setAttribute("class", "player active");
  inActive.setAttribute("class", "player");
